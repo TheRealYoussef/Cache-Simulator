@@ -1,5 +1,18 @@
 #include "DirectMapped.h"
 
+double DirectMapped::cacheSimDMHitRatio(unsigned int lineSize, unsigned int iterations, unsigned int(*memGen)())
+{
+	unsigned int hits = 0;
+	unsigned int addr;
+	for (int inst = 0; inst < iterations; inst++)
+	{
+		addr = (*memGen)();
+		if (DirectMapped::cacheSimDM(addr, Globals::caches[Globals::cacheLineSizeToIndex(lineSize)]) == Globals::HIT)
+			hits++;
+	}
+	return hits / (double)iterations;
+}
+
 Globals::CacheResType DirectMapped::cacheSimDM(unsigned int addr, std::vector<CacheLine> & cache)
 {
 	// This function accepts the memory address for the read and 

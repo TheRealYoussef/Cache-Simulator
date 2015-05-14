@@ -3,6 +3,7 @@
 CacheLine::CacheLine()
 {
 	validity = 0;
+	tag = 0;
 }
 
 bool CacheLine::getValidity() const

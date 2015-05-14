@@ -12,11 +12,22 @@ void FullyAssociative::init()
 	for (int i = 0; i < Globals::NUMBER_OF_CACHES; i++)
 	{
 		unsigned int lines = Globals::CACHE_SIZE / Globals::CACHE_LINE_SIZES[i];
-		accesses[i].resize(lines);
-		for (int j = 0; j < lines; j++)
-			accesses[i][j] = 0;
+		accesses[i].resize(lines, 0);
 		timeAccessed[i].resize(lines);
 	}
+}
+
+double FullyAssociative::cacheSimFAHitRatio(unsigned int lineSize, unsigned int iterations, unsigned int(*memGen)(), Globals::LineReplacement lineReplace)
+{
+	unsigned int hits = 0;
+	unsigned int addr;
+	for (int inst = 0; inst < iterations; inst++)
+	{
+		addr = (*memGen)();
+		if (FullyAssociative::cacheSimFA(addr, Globals::caches[Globals::cacheLineSizeToIndex(lineSize)], lineReplace) == Globals::HIT)
+			hits++;
+	}
+	return hits / (double)iterations;
 }
 
 Globals::CacheResType FullyAssociative::cacheSimFA(unsigned int addr, std::vector<CacheLine> & cache, Globals::LineReplacement lineReplace)

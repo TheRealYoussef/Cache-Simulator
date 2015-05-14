@@ -8,8 +8,9 @@ class FullyAssociative
 {
 public:
 	static void init();
-	static Globals::CacheResType cacheSimFA(unsigned int, std::vector<CacheLine> &, Globals::LineReplacement);
+	static double cacheSimFAHitRatio(unsigned int, unsigned int, unsigned int(*)(), Globals::LineReplacement);
 private:
+	static Globals::CacheResType cacheSimFA(unsigned int, std::vector<CacheLine> &, Globals::LineReplacement);
 	static std::vector<unsigned int> accesses[];
 	static std::vector<unsigned int> timeAccessed[];
 	static unsigned int time;

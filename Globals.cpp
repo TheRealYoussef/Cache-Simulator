@@ -10,7 +10,7 @@ void Globals::init()
 	{
 		unsigned int cacheNumber = cacheLineSizeToIndex(CACHE_LINE_SIZES[i]);
 		unsigned int lines = CACHE_SIZE / CACHE_LINE_SIZES[i];
-		caches[cacheNumber].resize(lines);
+		caches[cacheNumber].resize(lines, CacheLine());
 	}
 }
 
