@@ -21,7 +21,6 @@ void Globals::init()
 	{
 		unsigned int cacheNumber = cacheLineSizeToIndex(CACHE_LINE_SIZES[i]);
 		unsigned int lines = CACHE_SIZE / CACHE_LINE_SIZES[i];
-		time = 0;
 		if (!cachesReset)
 			caches[cacheNumber].resize(lines, CacheLine());
 		if (!accessesReset)
@@ -30,6 +29,7 @@ void Globals::init()
 			timeAccessed[i].resize(lines);
 		}
 	}
+	time = 0;
 	cachesReset = true;
 	accessesReset = true;
 }
