@@ -1,8 +1,19 @@
 #include "Globals.h"
+#include <algorithm>
 
 const unsigned int Globals::CACHE_LINE_SIZES[NUMBER_OF_CACHES] = { 8, 16, 32, 64, 128 };
 
 std::vector<CacheLine> Globals::caches[NUMBER_OF_CACHES];
+
+std::vector<unsigned int> Globals::accesses[NUMBER_OF_CACHES];
+
+std::vector<unsigned int> Globals::timeAccessed[NUMBER_OF_CACHES];
+
+unsigned int Globals::time;
+
+bool Globals::cachesReset;
+
+bool Globals::accessesReset;
 
 void Globals::init()
 {
@@ -10,17 +21,26 @@ void Globals::init()
 	{
 		unsigned int cacheNumber = cacheLineSizeToIndex(CACHE_LINE_SIZES[i]);
 		unsigned int lines = CACHE_SIZE / CACHE_LINE_SIZES[i];
-		caches[cacheNumber].resize(lines, CacheLine());
+		time = 0;
+		if (!cachesReset)
+			caches[cacheNumber].resize(lines, CacheLine());
+		if (!accessesReset)
+		{
+			accesses[i].resize(lines, 0);
+			timeAccessed[i].resize(lines);
+		}
 	}
+	cachesReset = true;
+	accessesReset = true;
 }
 
 unsigned int Globals::rand_()
 {
-	static unsigned int m_w = 0xABABAB55;    /* must not be zero, nor 0x464fffff */
-	static unsigned int m_z = 0x05080902;    /* must not be zero, nor 0x9068ffff */
+	static unsigned int m_w = 0xABABAB55;
+	static unsigned int m_z = 0x05080902;
 	m_z = 36969 * (m_z & 65535) + (m_z >> 16);
 	m_w = 18000 * (m_w & 65535) + (m_w >> 16);
-	return (m_z << 16) + m_w;  /* 32-bit result */
+	return (m_z << 16) + m_w;
 }
 
 unsigned int Globals::memGen1()
@@ -61,4 +81,25 @@ unsigned int Globals::memGen6()
 unsigned int Globals::cacheLineSizeToIndex(unsigned int lineSize)
 {
 	return (log2(lineSize) - 3);
+}
+
+void Globals::lineAccess(std::vector<CacheLine> & cache, unsigned int line, unsigned int tag, unsigned int cacheNum)
+{
+	cache[line].setTag(tag);
+	updateArrays(cacheNum, line);
+}
+
+void Globals::updateArrays(unsigned int cacheNum, unsigned int line)
+{
+	timeAccessed[cacheNum][line] = time++;
+	accesses[cacheNum][line]++;
+}
+
+unsigned int Globals::getMin(std::vector<unsigned int> & v, unsigned int lineSize, unsigned int start, unsigned int end)
+{
+	unsigned int minTime = UINT_MAX;
+	unsigned int lines = v.size();
+	for (unsigned int i = start; i < end; i++)
+		minTime = std::min(minTime, v[i]);
+	return minTime;
 }

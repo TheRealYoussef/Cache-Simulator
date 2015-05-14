@@ -15,8 +15,7 @@ double DirectMapped::cacheSimDMHitRatio(unsigned int lineSize, unsigned int iter
 
 Globals::CacheResType DirectMapped::cacheSimDM(unsigned int addr, std::vector<CacheLine> & cache)
 {
-	// This function accepts the memory address for the read and 
-	// returns whether it caused a cache miss or a cache hit
+	Globals::cachesReset = false;
 	unsigned int lines = cache.size();
 	unsigned int lineSize = Globals::CACHE_SIZE / lines;
 	unsigned int offset = log2(lineSize);

@@ -14,6 +14,14 @@ public:
 	const static unsigned int CACHE_SIZE = (32 * 1024);
 	const static unsigned int CACHE_LINE_SIZES[];
 	static std::vector<CacheLine> caches[];
+	static std::vector<unsigned int> accesses[];
+	static std::vector<unsigned int> timeAccessed[];
+	static bool cachesReset;
+	static bool accessesReset;
+	static unsigned int time;
+	static void lineAccess(std::vector<CacheLine> &, unsigned int, unsigned int, unsigned int);
+	static void updateArrays(unsigned int, unsigned int);
+	static unsigned int getMin(std::vector<unsigned int> &, unsigned int, unsigned int, unsigned int);
 	static void init();
 	static unsigned int memGen1();
 	static unsigned int memGen2();
