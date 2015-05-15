@@ -4,7 +4,7 @@ double DirectMapped::cacheSimDMHitRatio(unsigned int lineSize, unsigned int iter
 {
 	unsigned int hits = 0;
 	unsigned int addr;
-	for (int inst = 0; inst < iterations; inst++)
+	for (unsigned int inst = 0; inst < iterations; inst++)
 	{
 		addr = (*memGen)();
 		if (DirectMapped::cacheSimDM(addr, Globals::caches[Globals::cacheLineSizeToIndex(lineSize)]) == Globals::HIT)

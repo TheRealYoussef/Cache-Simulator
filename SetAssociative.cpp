@@ -4,7 +4,7 @@ double SetAssociative::cacheSimSAHitRatio(unsigned int lineSize, unsigned int it
 {
 	unsigned int hits = 0;
 	unsigned int addr;
-	for (int inst = 0; inst < iterations; inst++)
+	for (unsigned int inst = 0; inst < iterations; inst++)
 	{
 		addr = (*memGen)();
 		if (SetAssociative::cacheSimSA(addr, ways, Globals::caches[Globals::cacheLineSizeToIndex(lineSize)], lineReplace) == Globals::HIT)
@@ -20,13 +20,13 @@ Globals::CacheResType SetAssociative::cacheSimSA(unsigned int addr, unsigned int
 	unsigned int lines = cache.size();
 	unsigned int lineSize = Globals::CACHE_SIZE / lines;
 	unsigned int offset = log2(lineSize);
-	unsigned int sets = Globals::CACHE_SIZE / ways;
-	unsigned int set = (addr >> offset) % sets;
+	unsigned int sets = lines / ways;
 	unsigned int setBits = log2(sets);
+	unsigned int set = (addr >> offset) % sets;
 	unsigned int cacheTag = (addr >> (offset + setBits));
 	unsigned int cacheNumber = Globals::cacheLineSizeToIndex(lineSize);
 	//Access all lines in parallel but simulated using a loop
-	for (int i = set; i < set + ways; i++)
+	for (unsigned int i = set * ways; i < ways * (set + 1); i++)
 	{
 		if (cache[i].getValidity() == 0)
 		{
@@ -42,9 +42,6 @@ Globals::CacheResType SetAssociative::cacheSimSA(unsigned int addr, unsigned int
 		}
 	}
 	//Cache is full
-	unsigned int randNum;
-	unsigned int lru;
-	unsigned int lfu;
 	switch (lineReplace)
 	{
 	case Globals::RANDOM:

@@ -9,11 +9,17 @@ std::vector<unsigned int> Globals::accesses[NUMBER_OF_CACHES];
 
 std::vector<unsigned int> Globals::timeAccessed[NUMBER_OF_CACHES];
 
+unsigned int Globals::addr[NUMBER_OF_MEMGENS];
+
+unsigned int Globals::m_w;
+
+unsigned int Globals::m_z;
+
 unsigned int Globals::time;
 
-bool Globals::cachesReset;
+bool Globals::cachesReset = false;
 
-bool Globals::accessesReset;
+bool Globals::accessesReset = false;
 
 void Globals::init()
 {
@@ -22,13 +28,23 @@ void Globals::init()
 		unsigned int cacheNumber = cacheLineSizeToIndex(CACHE_LINE_SIZES[i]);
 		unsigned int lines = CACHE_SIZE / CACHE_LINE_SIZES[i];
 		if (!cachesReset)
-			caches[cacheNumber].resize(lines, CacheLine());
+		{
+			caches[cacheNumber].resize(lines);
+			for (unsigned int j = 0; j < lines; j++)
+				caches[cacheNumber][j].setValidity(0);
+		}
 		if (!accessesReset)
 		{
-			accesses[i].resize(lines, 0);
+			accesses[i].resize(lines);
 			timeAccessed[i].resize(lines);
+			for (unsigned int j = 0; j < lines; j++)
+				accesses[i][j] = 0;
 		}
 	}
+	for (int i = 0; i < NUMBER_OF_MEMGENS; i++)
+		addr[i] = 0;
+	m_w = 0xABABAB55;
+	m_z = 0x05080902;
 	time = 0;
 	cachesReset = true;
 	accessesReset = true;
@@ -36,8 +52,6 @@ void Globals::init()
 
 unsigned int Globals::rand_()
 {
-	static unsigned int m_w = 0xABABAB55;
-	static unsigned int m_z = 0x05080902;
 	m_z = 36969 * (m_z & 65535) + (m_z >> 16);
 	m_w = 18000 * (m_w & 65535) + (m_w >> 16);
 	return (m_z << 16) + m_w;
@@ -45,13 +59,11 @@ unsigned int Globals::rand_()
 
 unsigned int Globals::memGen1()
 {
-	static unsigned int addr = 0;
-	return (addr++) % (DRAM_SIZE);
+	return (addr[0]++) % (DRAM_SIZE);
 }
 
 unsigned int Globals::memGen2()
 {
-	static unsigned int addr = 0;
 	return  rand_() % (8 * 1024);
 }
 
@@ -62,20 +74,17 @@ unsigned int Globals::memGen3()
 
 unsigned int Globals::memGen4()
 {
-	static unsigned int addr = 0;
-	return (addr++) % (1024);
+	return (addr[3]++) % (1024);
 }
 
 unsigned int Globals::memGen5()
 {
-	static unsigned int addr = 0;
-	return (addr++) % (1024 * 64);
+	return (addr[4]++) % (1024 * 64);
 }
 
 unsigned int Globals::memGen6()
 {
-	static unsigned int addr = 0;
-	return (addr += 512) % (DRAM_SIZE);
+	return (addr[5] += 512) % (DRAM_SIZE);
 }
 
 unsigned int Globals::cacheLineSizeToIndex(unsigned int lineSize)
@@ -97,9 +106,12 @@ void Globals::updateArrays(unsigned int cacheNum, unsigned int line)
 
 unsigned int Globals::getMin(std::vector<unsigned int> & v, unsigned int lineSize, unsigned int start, unsigned int end)
 {
-	unsigned int minTime = UINT_MAX;
-	unsigned int lines = v.size();
+	unsigned int minTime = UINT_MAX, minIdx = UINT_MAX;
 	for (unsigned int i = start; i < end; i++)
+	{
 		minTime = std::min(minTime, v[i]);
-	return minTime;
+		if (minTime == v[i])
+			minIdx = i;
+	}
+	return minIdx;
 }

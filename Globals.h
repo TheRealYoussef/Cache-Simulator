@@ -10,6 +10,7 @@ public:
 	enum CacheResType { MISS, HIT };
 	enum LineReplacement { RANDOM, LRU, LFU };
 	const static unsigned int NUMBER_OF_CACHES = 5;
+	const static unsigned int NUMBER_OF_MEMGENS = 6;
 	const static unsigned int DRAM_SIZE = (64 * 1024 * 1024);
 	const static unsigned int CACHE_SIZE = (32 * 1024);
 	const static unsigned int CACHE_LINE_SIZES[];
@@ -19,6 +20,9 @@ public:
 	static bool cachesReset;
 	static bool accessesReset;
 	static unsigned int time;
+	static unsigned int m_w;
+	static unsigned int m_z;
+	static unsigned int addr[];
 	static void lineAccess(std::vector<CacheLine> &, unsigned int, unsigned int, unsigned int);
 	static void updateArrays(unsigned int, unsigned int);
 	static unsigned int getMin(std::vector<unsigned int> &, unsigned int, unsigned int, unsigned int);
