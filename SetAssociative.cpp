@@ -45,7 +45,7 @@ Globals::CacheResType SetAssociative::cacheSimSA(unsigned int addr, unsigned int
 	switch (lineReplace)
 	{
 	case Globals::RANDOM:
-		Globals::lineAccess(cache, Globals::rand_() % sets + set, cacheTag, cacheNumber);
+		Globals::lineAccess(cache, Globals::rand_() % ways + set * ways, cacheTag, cacheNumber);
 		break;
 	case Globals::LRU:
 		Globals::lineAccess(cache, Globals::getMin(Globals::timeAccessed[cacheNumber], lineSize, set * ways, ways * (set + 1)), cacheTag, cacheNumber);
