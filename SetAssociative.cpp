@@ -48,10 +48,10 @@ Globals::CacheResType SetAssociative::cacheSimSA(unsigned int addr, unsigned int
 		Globals::lineAccess(cache, Globals::rand_() % sets + set, cacheTag, cacheNumber);
 		break;
 	case Globals::LRU:
-		Globals::lineAccess(cache, Globals::getMin(Globals::timeAccessed[cacheNumber], lineSize, set, set + ways), cacheTag, cacheNumber);
+		Globals::lineAccess(cache, Globals::getMin(Globals::timeAccessed[cacheNumber], lineSize, set * ways, ways * (set + 1)), cacheTag, cacheNumber);
 		break;
 	case Globals::LFU:
-		Globals::lineAccess(cache, Globals::getMin(Globals::accesses[cacheNumber], lineSize, set, set + ways), cacheTag, cacheNumber);
+		Globals::lineAccess(cache, Globals::getMin(Globals::accesses[cacheNumber], lineSize, set * ways, ways * (set + 1)), cacheTag, cacheNumber);
 	}
 	return Globals::MISS;
 }
