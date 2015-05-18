@@ -1,32 +1,41 @@
 #include "Globals.h"
 #include <algorithm>
+#include <fstream>
 
-const unsigned int Globals::CACHE_LINE_SIZES[NUMBER_OF_CACHES] = { 8, 16, 32, 64, 128 };
+const unsigned int NUMBER_OF_CACHES = 5;
 
-std::vector<CacheLine> Globals::caches[NUMBER_OF_CACHES];
+const unsigned int NUMBER_OF_MEMGENS = 6;
 
-std::vector<unsigned int> Globals::accesses[NUMBER_OF_CACHES];
+const unsigned int DRAM_SIZE = (64 * 1024 * 1024);
 
-std::vector<unsigned int> Globals::timeAccessed[NUMBER_OF_CACHES];
+const unsigned int CACHE_SIZE = (32 * 1024);
 
-unsigned int Globals::addr[NUMBER_OF_MEMGENS];
+const unsigned int CACHE_LINE_SIZES[NUMBER_OF_CACHES] = { 8, 16, 32, 64, 128 };
 
-unsigned int Globals::m_w;
+std::vector<CacheLine> caches[NUMBER_OF_CACHES];
 
-unsigned int Globals::m_z;
+std::vector<unsigned int> accesses[NUMBER_OF_CACHES];
 
-unsigned int Globals::time;
+std::vector<unsigned int> timeAccessed[NUMBER_OF_CACHES];
 
-bool Globals::cachesReset = false;
+unsigned int addr[NUMBER_OF_MEMGENS];
 
-bool Globals::accessesReset = false;
+unsigned int m_w = 0xABABAB55;
+
+unsigned int m_z = 0x05080902;
+
+unsigned int timePassed = 0;
+
+bool cachesReset = false;
+
+bool accessesReset = false;
 
 void Globals::init()
 {
 	for (int i = 0; i < NUMBER_OF_CACHES; i++)
 	{
-		unsigned int cacheNumber = cacheLineSizeToIndex(CACHE_LINE_SIZES[i]);
-		unsigned int lines = CACHE_SIZE / CACHE_LINE_SIZES[i];
+		unsigned int cacheNumber = ((cacheLineSizeToIndex)(CACHE_LINE_SIZES[i]));
+		unsigned int lines = (CACHE_SIZE / CACHE_LINE_SIZES[i]);
 		if (!cachesReset)
 		{
 			caches[cacheNumber].resize(lines);
@@ -45,7 +54,7 @@ void Globals::init()
 		addr[i] = 0;
 	m_w = 0xABABAB55;
 	m_z = 0x05080902;
-	time = 0;
+	timePassed = 0;
 	cachesReset = true;
 	accessesReset = true;
 }
@@ -100,7 +109,7 @@ void Globals::lineAccess(std::vector<CacheLine> & cache, unsigned int line, unsi
 
 void Globals::updateArrays(unsigned int cacheNum, unsigned int line)
 {
-	timeAccessed[cacheNum][line] = time++;
+	timeAccessed[cacheNum][line] = timePassed++;
 	accesses[cacheNum][line]++;
 }
 

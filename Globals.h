@@ -4,25 +4,26 @@
 #include "CacheLine.h"
 #include <vector>
 
+const extern unsigned int NUMBER_OF_CACHES;
+const extern unsigned int NUMBER_OF_MEMGENS;
+const extern unsigned int DRAM_SIZE;
+const extern unsigned int CACHE_SIZE;
+const extern unsigned int CACHE_LINE_SIZES[];
+extern std::vector<CacheLine> caches[];
+extern std::vector<unsigned int> accesses[];
+extern std::vector<unsigned int> timeAccessed[];
+extern bool cachesReset;
+extern bool accessesReset;
+extern unsigned int timePassed;
+extern unsigned int m_w;
+extern unsigned int m_z;
+extern unsigned int addr[];
+
 class Globals
 {
 public:
 	enum CacheResType { MISS, HIT };
 	enum LineReplacement { RANDOM, LRU, LFU };
-	const static unsigned int NUMBER_OF_CACHES = 5;
-	const static unsigned int NUMBER_OF_MEMGENS = 6;
-	const static unsigned int DRAM_SIZE = (64 * 1024 * 1024);
-	const static unsigned int CACHE_SIZE = (32 * 1024);
-	const static unsigned int CACHE_LINE_SIZES[];
-	static std::vector<CacheLine> caches[];
-	static std::vector<unsigned int> accesses[];
-	static std::vector<unsigned int> timeAccessed[];
-	static bool cachesReset;
-	static bool accessesReset;
-	static unsigned int time;
-	static unsigned int m_w;
-	static unsigned int m_z;
-	static unsigned int addr[];
 	static void lineAccess(std::vector<CacheLine> &, unsigned int, unsigned int, unsigned int);
 	static void updateArrays(unsigned int, unsigned int);
 	static unsigned int getMin(std::vector<unsigned int> &, unsigned int, unsigned int, unsigned int);
@@ -33,6 +34,7 @@ public:
 	static unsigned int memGen4();
 	static unsigned int memGen5();
 	static unsigned int memGen6();
+	static unsigned int memGen();
 	static unsigned int cacheLineSizeToIndex(unsigned int);
 	static unsigned int rand_();
 };
